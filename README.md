@@ -9,7 +9,7 @@
 - `npm run dev`
 
 **添加几个组件如下：**
-![](/Users/qianguoqing/Documents/front-end-project-workspace/vue-ordering/images/组件目录.jpeg)
+![](https://raw.githubusercontent.com/QianGuoqing/markdown-images-repo/master/%E7%BB%84%E4%BB%B6%E7%9B%AE%E5%BD%95.jpeg)
 
 ---
 
