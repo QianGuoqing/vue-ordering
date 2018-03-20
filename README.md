@@ -76,7 +76,7 @@ export default new Router({
 
 路由可以设置的`path`是有限的，但是用户输入的`path`却是无限的，比如当前只有`/`和`/menu`两个路径，但是用户会在浏览器中输入`/asdfasdf/`这样的路径，一般情况下会之间显示404，用户体验不好。所以需要进行容错处理，这样就可以在`routes`配置一个特定的路由。使用`redirect`
 
-```javascript``
+```javascript
     {
       path: '*',
       redirect: '/home'
