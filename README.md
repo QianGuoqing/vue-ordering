@@ -120,3 +120,29 @@ export default new Router({
       }
     }
 ```
+
+### 路由嵌套（二级路由、三级路由）
+
+路由嵌套，其实很简单，就是在一个路由组件中在配置一些路由，然后使用`router-view`在这个组件中显示子路由的内容就行了。
+
+在配置路由的时候，只要在这个组件的路有对象下面再使用一个`children`的属性，它的值是一个数组，数组里面放的认识配置路由的信息。
+
+```javascript
+    {
+      path: '/about',
+      name: 'About',
+      component: About,
+      children: [
+        {
+          path: 'contact',
+          name: 'Contact',
+          component: Contact
+        },
+        // ... 更多子路由配置
+      ]
+    },
+```
+
+需要注意的是，子路由配置的时候，在`path`这里，不要加上`/contact`，这样会直接跳转到根路径下的`contact`路径，而不是需求中的`/about/contact`这样的路径。
+
+三级路由的实现，其实就是在二级路由的组件中在配置如上操作就行了。只要有需求，配置N级路由都可以，方法是一样的。

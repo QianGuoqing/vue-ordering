@@ -7,6 +7,16 @@ import Login from '../components/Login'
 import Register from '../components/Register'
 import About from '../components/about/About'
 
+// 二级路由
+import Contact from '../components/about/Contact'
+import Delivery from '../components/about/Delivery'
+import History from '../components/about/History'
+import OrderingGuide from '../components/about/OrderingGuide'
+
+// 三级路由
+import Phone from '../components/about/contact/Phone'
+import PersonName from '../components/about/contact/PersonName'
+
 Vue.use(Router)
 
 export default new Router({
@@ -30,7 +40,41 @@ export default new Router({
     {
       path: '/about',
       name: 'About',
-      component: About
+      component: About,
+      children: [
+        {
+          path: 'path',
+          name: 'Contact',
+          component: Contact,
+          children: [
+            {
+              path: 'phone',
+              name: 'Phone',
+              component: Phone
+            },
+            {
+              path: 'personName',
+              name: 'PersonName',
+              component: PersonName
+            }
+          ]
+        },
+        {
+          path: 'delivery',
+          name: 'Delivery',
+          component: Delivery
+        },
+        {
+          path: 'history',
+          name: 'History',
+          component: History
+        },
+        {
+          path: 'orderingGuide',
+          name: 'OrderingGuide',
+          component: OrderingGuide
+        }
+      ]
     },
     {
       path: '/login',
