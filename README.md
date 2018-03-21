@@ -325,3 +325,19 @@ Vue.prototype.$http = axios
         })
       }
 ```
+
+
+## 番外
+
+### `vuex`一览
+
+先学习这个`vuex-demo`，了解什么是`vuex`，如何使用`vuex`，再在项目中使用`vuex`。
+
+`vuex`是集中管理数据状态的一种方式，解决了组件间复杂相互通信的问题。`vuex`通过一个集中的数据存储，让程序的各个组件可以访问到这些数据。
+
+一张来自官方文档的`vuex`流程图：
+
+![](https://vuex.vuejs.org/zh-cn/images/vuex.png)
+
+我们会在后面通过代码的形式来理解这张图的流程。
+
