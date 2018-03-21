@@ -22,6 +22,7 @@
 </template>
 
 <script>
+  import axios from 'axios'
   export default {
     data() {
       return {
@@ -31,7 +32,26 @@
     },
     methods: {
       onSubmit() {
+        axios.get('/users.json').then(response => {
+          const data = response.data
+          const users = []
+          for (let key in data) {
+            const user = data[key]
+            users.push(user)
+          }
 
+          let result = users.filter(user => {
+            return user.email === this.email && user.password === this.password
+          })
+
+          if (result && result.length > 0) {
+            this.$router.push('/home')
+          } else {
+            alert('账号或密码错误')
+          }
+        }).catch(error => {
+          console.log(error)
+        })
       }
     },
   }

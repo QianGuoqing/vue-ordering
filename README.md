@@ -263,6 +263,56 @@ router.beforeEach((to, from, next) => {
     },
 ```
 
+--- 
 
 
+## axios
 
+`axios`是一种基于`Promise`的HTTP库，可以用于ajax数据请求。在项目中安装`axios`: 
+
+`npm install --save axios` 
+
+在组件中如果要使用`axios`，则需要引入：
+
+`import axios from 'axios`
+
+使用`axios`的两种方式：`GET`, `POST`，现在分别看看如何使用。
+
+在`Register.vue`组件中：
+
+```javascript
+      onSubmit() {
+        if (this.password === this.confirmPassword) {
+          const formData = {
+            email: this.email,
+            password: this.password,
+            confirmPassword: this.confirmPassword
+          }
+
+          axios.post('/users.json', formData).then(response => {
+            this.$router.push({ name: 'Login' })
+          }).catch(error => {
+            console.log(error)
+          })
+        } else {
+          alert('两次密码不一致')
+        }
+      }
+```
+
+在`Login.vue`组件中：
+
+```javascript
+      onSubmit() {
+        axios.get('/users.json').then(response => {
+          const data = response.data
+          const users = []
+          for (let key in data) {
+            const user = data[key]
+            users.push(user)
+          }
+        }).catch(error => {
+          console.log(error)
+        })
+      }
+```

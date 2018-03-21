@@ -7,7 +7,7 @@
           <form @submit.prevent="onSubmit">
             <div class="form-group">
               <label for="email">邮箱</label>
-              <input type="email" class="form-control" v-model="email">
+              <input type="text" class="form-control" v-model="email">
             </div>
             <div class="form-group">
               <label for="password">密码</label>
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+  import axios from 'axios'
   export default {
     name: "register",
     data() {
@@ -37,7 +38,21 @@
     },
     methods: {
       onSubmit() {
+        if (this.password === this.confirmPassword) {
+          const formData = {
+            email: this.email,
+            password: this.password,
+            confirmPassword: this.confirmPassword
+          }
 
+          axios.post('/users.json', formData).then(response => {
+            this.$router.push({ name: 'Login' })
+          }).catch(error => {
+            console.log(error)
+          })
+        } else {
+          alert('两次密码不一致')
+        }
       }
     },
   }

@@ -3,6 +3,9 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import axios from 'axios'
+
+axios.defaults.baseURL = 'https://wd2468178309upkmpi.wilddogio.com/'
 
 Vue.config.productionTip = false
 
