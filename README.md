@@ -179,7 +179,7 @@ router.beforeEach((to, from, next) => {
 ```
 
 
-### 路由独享守卫
+#### 路由独享守卫
 
 在单个路由（仅对配置的路由生效）的配置中使用的： 
 
@@ -196,7 +196,7 @@ router.beforeEach((to, from, next) => {
 
 配置了以后，每当要跳转到`/admin`的时候，非登录状态下是不能进入的。
 
-### 组件内路由守卫
+#### 组件内路由守卫
 
 在组件内配置（仅对配置过的组件有效）：
 
@@ -227,6 +227,40 @@ router.beforeEach((to, from, next) => {
   }
 </script>
 
+```
+
+
+### 复用`router-view`
+
+一般情况下，`router-view`的使用是展现一个容器组件`container component`，当时有时候的需求是：在首页的时候能通过`router-view`展现多个容器组件，比如能在首页展现订单详情页、首页等。
+做法：首先用多个`router-view`来展现所需要的组件，并给每个`router-view`上添加一个`name="xxxxx"`的属性和值。然后在配置路由的子项中，使用`components`而不是`component`，`components`的值是一个对象，给对象中的键值对就是刚刚`router-view`中的`name`值，和要展现的组件。形如`{ router-view-name: componentName }`。当然对象中有个属性是`default`，用于默认展现的组件。
+
+```javascript
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12 col-md-4">
+          <router-view name="orderingGuide"></router-view>
+        </div>
+        <div class="col-sm-12 col-md-4">
+          <router-view name="delivery"></router-view>
+        </div>
+        <div class="col-sm-12 col-md-4">
+          <router-view name="history"></router-view>
+        </div>
+      </div>
+    </div>
+    ---
+    {
+      path: '/home',
+      name: 'Home',
+      // component: Home
+      components: {
+        default: Home, // 默认显示Home组件
+        'orderingGuide': OrderingGuide,
+        'delivery': Delivery,
+        'history': History
+      }
+    },
 ```
 
 

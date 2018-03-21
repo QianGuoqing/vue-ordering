@@ -25,7 +25,13 @@ const router = new Router({
     {
       path: '/home',
       name: 'Home',
-      component: Home
+      // component: Home
+      components: {
+        default: Home, // 默认显示Home组件
+        'orderingGuide': OrderingGuide,
+        'delivery': Delivery,
+        'history': History
+      }
     },
     {
       path: '/menu',
@@ -93,7 +99,19 @@ const router = new Router({
       path: '*',
       redirect: '/home'
     }
-  ]
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    // return {
+      // x: 0,
+      // y: 100
+      // selector: 'button'
+    // }
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { x: 0, y: 0 }
+    }
+  }
 })
 
 // 全局守卫
