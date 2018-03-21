@@ -9,6 +9,7 @@
 - `npm run dev`
 
 **添加几个组件如下：**
+
 ![](https://raw.githubusercontent.com/QianGuoqing/markdown-images-repo/master/%E7%BB%84%E4%BB%B6%E7%9B%AE%E5%BD%95.jpeg)
 
 ---
@@ -146,3 +147,88 @@ export default new Router({
 需要注意的是，子路由配置的时候，在`path`这里，不要加上`/contact`，这样会直接跳转到根路径下的`contact`路径，而不是需求中的`/about/contact`这样的路径。
 
 三级路由的实现，其实就是在二级路由的组件中在配置如上操作就行了。只要有需求，配置N级路由都可以，方法是一样的。
+
+
+### 路由守卫
+
+路由守卫的作用就是，当进行路由跳转的时候，在跳转前，或者跳转后所要执行的事情。比如，如果一个用户没有登录的情况下，想跳转到比如菜单管理页（`path: /menu, component: Menu`）。通过路由守卫，在跳转到菜单管理页之前会执行一个事件，该事件可以是“由于没有登录的情况下，阻止跳转到菜单管理页”。这样，用户在未登录的情况下就不能跳转到菜单管理页，页面上仍然停留在登录页面。如果用户登录了，那么在跳转路由前，仍然会执行一个事件，可以是“用户已登录，可以进行菜单页的跳转”。这两个事件可以放在一个函数里面，通过条件判断来决定执行哪一个事件。而这个函数的实现就需要**路由守卫**了。
+
+#### 全局守卫
+
+全局守卫（对每个路由都生效）内容可以再`router/index.js`中编写：
+
+
+```javascript
+// 全局守卫
+// 在点击任何一个路由之前，都会执行
+router.beforeEach((to, from, next) => {
+  /**
+   * to: 进入到哪个路由
+   * from: 从哪个路由跳转的
+   * next: 决定是否要继续进行下去，是一个函数，如果执行next()，则跳转到下一个路由
+   *       否则不跳转，所以按照刚刚说的，在未登录的情况下，如果当前页面不是登录页，则
+   *       不执行next()或者执行next('/login')，如果是登录状态，路由跳转的执行执行next()
+   * */
+  if (to.path === '/login' || to.path === '/register') {
+    next()
+  } else {
+    alert('尚未登录，请登录或注册')
+    next('/login')
+  }
+})
+```
+
+
+### 路由独享守卫
+
+在单个路由（仅对配置的路由生效）的配置中使用的： 
+
+```javascript
+    {
+      path: '/admin',
+      name: 'Admin',
+      component: Admin,
+      beforeEnter(to, next, from) {
+        alert('非登录状态不能此页面')
+      }
+    }
+```
+
+配置了以后，每当要跳转到`/admin`的时候，非登录状态下是不能进入的。
+
+### 组件内路由守卫
+
+在组件内配置（仅对配置过的组件有效）：
+
+```javascript
+<template>
+  <h1>admin</h1>
+</template>
+
+<script>
+  export default {
+    data() {
+      return {
+        username: 'Qian'
+      }
+    },
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        alert(`${vm.username}, 你尚未登录，不能进入此页`)
+      })
+    },
+    beforeRouteLeave(to, from, next) {
+      if (confirm('确定离开？')) {
+        next()
+      } else {
+        next(false)
+      }
+    }
+  }
+</script>
+
+```
+
+
+
+
