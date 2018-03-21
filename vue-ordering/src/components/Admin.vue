@@ -1,14 +1,76 @@
 <template>
-  <h1>admin</h1>
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <!--new pizza-->
+      <new-pizza></new-pizza>
+    </div>
+    <div class="col-md-4 col-sm-12">
+      <!--品种展示-->
+      <h3 class="text-muted my-5">菜单</h3>
+      <table class="table">
+        <thead class="table table-default">
+          <tr>
+            <th>品种</th>
+            <th>删除</th>
+          </tr>
+        </thead>
+        <tbody v-for="item in getMenuItems" :key="item.name">
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>
+              <button @click="deleteData(item)" class="btn btn-outline-danger btn-sm">&times;</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>
 
 <script>
+  import NewPizza from './NewPizza'
   export default {
+    components: {
+      NewPizza
+    },
     data() {
       return {
-        username: 'Qian'
+        // username: 'Qian'
+        getMenuItems: []
       }
     },
+    computed: {
+
+    },
+    methods: {
+      deleteData(item) {
+        fetch('https://wd2468178309upkmpi.wilddogio.com/menu/' + item.id + '/.json', {
+          method: 'DELETE',
+          headers: {
+            'Content-type': 'application/json'
+          }
+        }).then(response => response.json())
+          .then(data => this.$router.push('/menu'))
+          .catch(error => console.log(error))
+      }
+    },
+    created() {
+      fetch('https://wd2468178309upkmpi.wilddogio.com/menu.json')
+        .then(response => {
+          return response.json()
+        })
+        .then(data => {
+          let menuArray = []
+          for (let key in data) {
+            data[key].id = key
+            menuArray.push(data[key])
+          }
+          this.getMenuItems = menuArray
+        })
+        .catch(error => {
+          console.log(error)
+      })
+    }
     // beforeRouteEnter(to, from, next) {
     //   next(vm => {
     //     alert(`${vm.username}, 你尚未登录，不能进入此页`)

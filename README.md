@@ -276,6 +276,15 @@ router.beforeEach((to, from, next) => {
 
 `import axios from 'axios`
 
+全局导入`axios`，在`main.js`中：
+
+```javascript
+// 配置Vue原型（在任何组件中都可以正常使用axios，而不需要另外导入axios了）
+Vue.prototype.$http = axios
+```
+
+在任何组件中，只需要使用`this.$http`就指代了`axios`，可以使用`axios`所有功能。
+
 使用`axios`的两种方式：`GET`, `POST`，现在分别看看如何使用。
 
 在`Register.vue`组件中：
