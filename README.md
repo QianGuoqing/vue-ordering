@@ -532,5 +532,36 @@ saleProducts() {
 ```
 
 
+#### `mapState`, `mapGetters`, `mapMutations`, `mapActions`
+
+这些是`vuex`提供的一种简便的使用`state`、`getters`、`mutations`、`actions`的方法。
+
+```javascript
+<script>
+  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+  export default {
+    computed: {
+      // products() {
+      //   return this.$store.state.products;
+      // },
+      // saleProducts() {
+      //   return this.$store.getters.saleProducts
+      // }
+      ...mapState(['products']),
+      ...mapGetters(['saleProducts'])
+    },
+    methods: {
+      // reducePrice(amount) {
+      //   this.$store.dispatch('reducePriceAsync', amount)
+      // }
+      ...mapMutations(['reducePrice']),
+      ...mapActions(['reducePriceAsync'])
+    },
+  }
+</script>
+```
+
+
+现在再来理解官方文档的那张`vuex`流程图。用户点击`Vue component`上的一个按钮触发数据请求，数据请求是一种异步的方式，所以就会`dispatch`一个`actions`，等异步请求完成以后，再通过`commit`来执行`mutations`，`mutations`的执行会改变`state`中的数据，当数据发生了变化，就会重新渲染`Vue component`。
 
 
