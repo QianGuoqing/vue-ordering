@@ -331,7 +331,11 @@ Vue.prototype.$http = axios
 
 ### `vuex`一览
 
-先学习这个`vuex-demo`，了解什么是`vuex`，如何使用`vuex`，再在项目中使用`vuex`。
+先学习这个`vuex-demo`，了解什么是`vuex`，如何使用`vuex`，再在项目中使用`vuex`。[代码地址](https://github.com/QianGuoqing/vue-ordering/tree/master/vuex-demo)
+
+在没有`vuex`的情况下，组件数据通信还是依靠`prop`和事件回调。如果组件层级过多，而底层组件想要获取顶层组件，就会很麻烦。其次，兄弟组件之间的数据通信也很麻烦。
+
+![](https://raw.githubusercontent.com/QianGuoqing/vue-ordering/master/images/%E6%B2%A1%E6%9C%89vuex%E7%9A%84%E6%95%B0%E6%8D%AE%E9%80%9A%E4%BF%A1.jpeg)
 
 `vuex`是集中管理数据状态的一种方式，解决了组件间复杂相互通信的问题。`vuex`通过一个集中的数据存储，让程序的各个组件可以访问到这些数据。
 
@@ -340,4 +344,193 @@ Vue.prototype.$http = axios
 ![](https://vuex.vuejs.org/zh-cn/images/vuex.png)
 
 我们会在后面通过代码的形式来理解这张图的流程。
+
+
+### `vuex`
+
+#### 安装和引入
+
+使用`npm`安装`vuex`，`npm install --save vuex`。
+在`src`文件夹下，新建一个文件夹，名为`store`，在该文件夹下新建一个文件`index.js`。在`index.js`中编写如下代码来进行初始化：
+
+```javascript
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+const store = new Vuex.Store({
+  state: {
+
+  },
+  mutations: {
+
+  },
+  actions: {
+
+  },
+  getters: {
+
+  }
+})
+
+export default store
+
+```
+
+在`main.js`中引入`store`
+
+```javascript
+import Vue from 'vue'
+import App from './App'
+import router from './router'
+import store from './store'
+
+Vue.config.productionTip = false
+
+/* eslint-disable no-new */
+new Vue({
+  el: '#app',
+  router,
+  store,
+  components: { App },
+  template: '<App/>'
+})
+```
+
+这样，`vuex`的初始化工作就完成了。
+
+#### `state`
+可以将数据存储在`state`这个对象中，别的组件就可以通过某写方式访问到这个`state`中的数据。
+
+```javascript
+  state: {
+    products: [
+      {
+        name: '张三',
+        price: 200
+      },
+      {
+        name: '李四',
+        price: 140
+      },
+      {
+        name: '王五',
+        price: 20
+      },
+      {
+        name: '赵六',
+        price: 10
+      }
+    ]
+  },
+```
+
+那么如何在组件中获取`state`中的数据呢？可以在组件中使用`computed`和`$store`，`$store`是`vuex`自带的。
+
+```javascript
+    computed: {
+      products() {
+        return this.$store.state.products;
+      }
+    }
+```
+
+通过`$store`可以获取到`state`，从而就能获取到`state`中的数据了。
+
+
+#### `getters`
+`vuex`中的`getters`的作用，和`vue`中的`computed`作用很相似。
+
+如果说有很多组件都需要一个改变的属性（如价格变为原来的一半的函数），有一种做法就是将这个函数复制粘贴到各个有这个需求的组件，这就不符合“复用”的概念了。
+
+这时候就可以使用`vuex`中的`getters`了，它可以被认为是`store` 的计算属性（正如前面所说）。就像计算属性一样，getter 的返回值会根据它的依赖被缓存起来，且只有当它的依赖值发生了改变才会被重新计算。
+
+```javascript
+  getters: {
+    saleProducts(state) {
+      let saleProducts = state.products.map(product => {
+        return {
+          name: `**${product.name}**`,
+          price: product.price * 0.5
+        }
+      })
+      return saleProducts
+    }
+  }
+```
+
+```javascript
+saleProducts() {
+   return this.$store.getters.saleProducts
+}
+```
+
+#### `mutations`
+
+**只用通过提交(`commit`) `mutations` 才能修改`state`的数据**
+
+```javascript
+  mutations: {
+    reducePrice(state) {
+      return state.products.forEach(product => {
+        product.price -= 10
+      })
+    }
+  },
+```
+
+```javascript
+    methods: {
+      reducePrice() {
+        this.$store.commit('reducePrice')
+      }
+    }
+```
+
+如果要给`mutations`中的事件传递参数，可以使`payload`（通常以对象方式传递）。
+
+```javascript
+  mutations: {
+    reducePrice(state, payload) {
+      return state.products.forEach(product => {
+        product.price -= payload.steps
+      })
+    }
+  },
+```
+
+```javascript
+    methods: {
+      reducePrice() {
+        this.$store.commit('reducePrice', { steps: 20 })
+      }
+    }
+```
+
+
+#### `actions`
+
+现在我们已经知道`mutations`可以改变`state`的数据。但是`mutations`只能处理同步的情况，如果遇到异步(`setTimeout`, `ajax`获取数据等)，就需要使用`actions`了。在异步情况下，将状态改变的函数写在`actions`中，也就是说，如果遇到异步的情况，就在`actions`中的异步中调用`mutations`。要触发`actions`则需要使用`dispatch`。
+
+```javascript
+  actions: {
+    reducePriceAsync(context, payload) {
+      setTimeout(function () {
+        context.commit('reducePrice', payload)
+      }, 2000)
+    }
+  },
+```
+
+```javascript
+    methods: {
+      reducePrice(amount) {
+        this.$store.dispatch('reducePriceAsync', amount)
+      }
+    },
+```
+
+
+
 
