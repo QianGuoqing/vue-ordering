@@ -65,7 +65,7 @@
       return {
         baskets: [],
         basketsText: '购物车没有任何商品',
-        getMenuItems: {}
+        // getMenuItems: {}
       }
     },
     created() {
@@ -79,6 +79,11 @@
           totalCost += individualItem.quantity * individualItem.price
         }
         return totalCost
+      },
+      getMenuItems() {
+        // 在vuex中获取数据
+        // return this.$store.state.menuItems
+        return this.$store.getters.getMenuItems
       }
     },
     methods: {
@@ -94,7 +99,7 @@
         //   .then(response => this.getMenuItems = response.data)
         //   .catch(error => console.log(error))
         this.$http.get('menu.json')
-          .then(response => this.getMenuItems = response.data)
+          .then(response => this.$store.commit('setMenuItems', response.data))
           .catch(error => console.log(error))
       },
       addToBasket(item, option) {

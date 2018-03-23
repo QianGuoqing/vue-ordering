@@ -564,4 +564,132 @@ saleProducts() {
 
 现在再来理解官方文档的那张`vuex`流程图。用户点击`Vue component`上的一个按钮触发数据请求，数据请求是一种异步的方式，所以就会`dispatch`一个`actions`，等异步请求完成以后，再通过`commit`来执行`mutations`，`mutations`的执行会改变`state`中的数据，当数据发生了变化，就会重新渲染`Vue component`。
 
+---
 
+### 项目中使用`vuex`
+
+具体操作是通过发送HTTP请求对数据进行获取，数据请求到后，将请求下的数据存储到`vuex`中。
+
+```javascript
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+const store = new Vuex.Store({
+  state: {
+    menuItems: {},
+    currentUser: null,
+    isLogin: false
+  },
+  getters: {
+    getMenuItems: state => state.menuItems,
+    currentUser: state => state.currentUser,
+    isLogin: state => state.isLogin
+  },
+  mutations: {
+    setMenuItems(state, data) {
+      state.menuItems = data
+    },
+    removeMenuItems(state, data) {
+      state.menuItems.forEach((item, index) => {
+        if (item === data) {
+          state.menuItems.splice(index, 1)
+        }
+      })
+    },
+    pushToMenuItems(state, data) {
+      state.menuItems.push(data)
+    },
+    userStatus(state, user) {
+      if (user) {
+        state.currentUser = user
+        state.isLogin = true
+      } else {
+        state.currentUser = null
+        state.isLogin = false
+      }
+    }
+  },
+  actions: {
+    setUser({commit}, user) {
+      commit('userStatus', user)
+    }
+  }
+})
+
+export default store
+
+```
+
+对上面的代码进行抽离，在`store`文件夹下分别新建如下文件：`mutations.js`、`actions.js`、`getters.js`。
+
+`mutations.js`:
+
+```javascript
+export const setMenuItems = (state, data) => {
+  state.menuItems = data
+}
+
+export const removeMenuItems = (state, data) => {
+  state.menuItems.forEach((item, index) => {
+    if (item === data) {
+      state.menuItems.splice(index, 1)
+    }
+  })
+}
+export const pushToMenuItems = (state, data) => {
+  state.menuItems.push(data)
+}
+export const userStatus = (state, user) => {
+  if (user) {
+    state.currentUser = user
+    state.isLogin = true
+  } else {
+    state.currentUser = null
+    state.isLogin = false
+  }
+}
+```
+
+`actions.js`: 
+
+```javascript
+export const setUser = ({commit}, user) => {
+  commit('userStatus', user)
+}
+```
+
+`getters.js`: 
+
+```javascript
+export const getMenuItems = state => state.menuItems
+export const currentUser = state => state.currentUser
+export const isLogin = state => state.isLogin
+```
+
+修改后的`index.js`: 
+
+```javascript
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+import * as actions from './actions'
+import * as getters from './getters'
+import * as mutations from './mutations'
+
+const store = new Vuex.Store({
+  state: {
+    menuItems: {},
+    currentUser: null,
+    isLogin: false
+  },
+  getters,
+  mutations,
+  actions
+})
+
+export default store
+```

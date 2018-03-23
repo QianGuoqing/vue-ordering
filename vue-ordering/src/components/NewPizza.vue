@@ -82,7 +82,9 @@
           },
           body: JSON.stringify(data)
         }).then(response => response.json())
-          .then(data => this.$router.push('/menu'))
+          .then(data => {
+            this.$store.commit('pushToMenuItems', data)
+          })
           .catch(error => {
           console.log(error)
         })

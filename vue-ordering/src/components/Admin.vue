@@ -9,18 +9,18 @@
       <h3 class="text-muted my-5">菜单</h3>
       <table class="table">
         <thead class="table table-default">
-          <tr>
-            <th>品种</th>
-            <th>删除</th>
-          </tr>
+        <tr>
+          <th>品种</th>
+          <th>删除</th>
+        </tr>
         </thead>
         <tbody v-for="item in getMenuItems" :key="item.name">
-          <tr>
-            <td>{{ item.name }}</td>
-            <td>
-              <button @click="deleteData(item)" class="btn btn-outline-danger btn-sm">&times;</button>
-            </td>
-          </tr>
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>
+            <button @click="deleteData(item)" class="btn btn-outline-danger btn-sm">&times;</button>
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>
@@ -29,6 +29,7 @@
 
 <script>
   import NewPizza from './NewPizza'
+
   export default {
     components: {
       NewPizza
@@ -36,11 +37,20 @@
     data() {
       return {
         // username: 'Qian'
-        getMenuItems: []
+        // getMenuItems: []
       }
     },
     computed: {
+      getMenuItems: {
+        // 在vuex中获取数据
+        get() {
+          // return this.$store.state.menuItems
+          return this.$store.getters.getMenuItems
+        },
+        set() {
 
+        }
+      }
     },
     methods: {
       deleteData(item) {
@@ -50,7 +60,10 @@
             'Content-type': 'application/json'
           }
         }).then(response => response.json())
-          .then(data => this.$router.push('/menu'))
+          // .then(data => this.$router.push('/menu'))
+          .then(data => {
+            this.$store.commit('removeMenuItems', item)
+          })
           .catch(error => console.log(error))
       }
     },
@@ -65,11 +78,12 @@
             data[key].id = key
             menuArray.push(data[key])
           }
-          this.getMenuItems = menuArray
+          this.$store.commit('setMenuItems', menuArray)
+          // this.getMenuItems = menuArray
         })
         .catch(error => {
           console.log(error)
-      })
+        })
     }
     // beforeRouteEnter(to, from, next) {
     //   next(vm => {

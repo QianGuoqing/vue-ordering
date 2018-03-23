@@ -30,6 +30,9 @@
         password: '',
       }
     },
+    beforeRouteEnter(to, from, next) {
+      next(vm => vm.$store.dispatch('setUser', null))
+    },
     methods: {
       onSubmit() {
         axios.get('/users.json').then(response => {
@@ -45,9 +48,11 @@
           })
 
           if (result && result.length > 0) {
+            this.$store.dispatch('setUser', result[0].email)
             this.$router.push('/home')
           } else {
             alert('账号或密码错误')
+            this.$store.dispatch('setUser', null)
           }
         }).catch(error => {
           console.log(error)
